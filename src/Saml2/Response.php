@@ -405,40 +405,42 @@ class Response
                 }
             }
 
-            if (empty($signedElements) || (!$hasSignedResponse && !$hasSignedAssertion)) {
-                throw new ValidationError(
-                    'No Signature found. SAML Response rejected',
-                    ValidationError::NO_SIGNATURE_FOUND
-                );
-            } else {
-                $cert = $idpData['x509cert'];
-                $fingerprint = $idpData['certFingerprint'];
-                $fingerprintalg = $idpData['certFingerprintAlgorithm'];
+			if ($security['checkSignature']) {
+				if (empty($signedElements) || (!$hasSignedResponse && !$hasSignedAssertion)) {
+					throw new ValidationError(
+						'No Signature found. SAML Response rejected',
+						ValidationError::NO_SIGNATURE_FOUND
+					);
+				} else {
+					$cert = $idpData['x509cert'];
+					$fingerprint = $idpData['certFingerprint'];
+					$fingerprintalg = $idpData['certFingerprintAlgorithm'];
 
-                $multiCerts = null;
-                $existsMultiX509Sign = isset($idpData['x509certMulti']) && isset($idpData['x509certMulti']['signing']) && !empty($idpData['x509certMulti']['signing']);
+					$multiCerts = null;
+					$existsMultiX509Sign = isset($idpData['x509certMulti']) && isset($idpData['x509certMulti']['signing']) && !empty($idpData['x509certMulti']['signing']);
 
-                if ($existsMultiX509Sign) {
-                    $multiCerts = $idpData['x509certMulti']['signing'];
-                }
+					if ($existsMultiX509Sign) {
+						$multiCerts = $idpData['x509certMulti']['signing'];
+					}
 
-                // If find a Signature on the Response, validates it checking the original response
-                if ($hasSignedResponse && !Utils::validateSign($this->document, $cert, $fingerprint, $fingerprintalg, Utils::RESPONSE_SIGNATURE_XPATH, $multiCerts)) {
-                    throw new ValidationError(
-                        "Signature validation failed. SAML Response rejected",
-                        ValidationError::INVALID_SIGNATURE
-                    );
-                }
+					// If find a Signature on the Response, validates it checking the original response
+					if ($hasSignedResponse && !Utils::validateSign($this->document, $cert, $fingerprint, $fingerprintalg, Utils::RESPONSE_SIGNATURE_XPATH, $multiCerts)) {
+						throw new ValidationError(
+							"Signature validation failed. SAML Response rejected",
+							ValidationError::INVALID_SIGNATURE
+						);
+					}
 
-                // If find a Signature on the Assertion (decrypted assertion if was encrypted)
-                $documentToCheckAssertion = $this->encrypted ? $this->decryptedDocument : $this->document;
-                if ($hasSignedAssertion && !Utils::validateSign($documentToCheckAssertion, $cert, $fingerprint, $fingerprintalg, Utils::ASSERTION_SIGNATURE_XPATH, $multiCerts)) {
-                    throw new ValidationError(
-                        "Signature validation failed. SAML Response rejected",
-                        ValidationError::INVALID_SIGNATURE
-                    );
-                }
-            }
+					// If find a Signature on the Assertion (decrypted assertion if was encrypted)
+					$documentToCheckAssertion = $this->encrypted ? $this->decryptedDocument : $this->document;
+					if ($hasSignedAssertion && !Utils::validateSign($documentToCheckAssertion, $cert, $fingerprint, $fingerprintalg, Utils::ASSERTION_SIGNATURE_XPATH, $multiCerts)) {
+						throw new ValidationError(
+							"Signature validation failed. SAML Response rejected",
+							ValidationError::INVALID_SIGNATURE
+						);
+					}
+				}
+			}
             return true;
         } catch (Exception $e) {
             $this->_error = $e;
