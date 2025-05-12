@@ -405,6 +405,10 @@ class Response
                 }
             }
 
+            /**
+             * Rispetto alla versione 4.2.0 abbiamo inserito questo check che permette di disabilitare il controllo della firma
+             * in caso di pacchetti non firmati (es.: Shibboleth)
+             */
 			if ($security['checkSignature']) {
 				if (empty($signedElements) || (!$hasSignedResponse && !$hasSignedAssertion)) {
 					throw new ValidationError(
