@@ -1,18 +1,19 @@
 {
-    "name": "onelogin/php-saml",
-    "description": "PHP SAML Toolkit",
+    "name": "lucabonazzi-4clegal/php-saml-4c",
+    "description": "PHP SAML Toolkit - Fork by 4cLegal",
     "license": "MIT",
-    "homepage": "https://github.com/SAML-Toolkits/php-saml",
-    "keywords": ["saml", "saml2", "sso", "federation", "identity"],
+    "homepage": "https://github.com/lucabonazzi-4clegal/php-saml-4c",
+    "keywords": [
+        "saml",
+        "saml2",
+        "sso",
+        "federation",
+        "identity"
+    ],
     "autoload": {
         "psr-4": {
             "OneLogin\\": "src/"
         }
-    },
-    "support": {
-        "email": "sixto.martin.garcia@gmail.com",
-        "issues": "https://github.com/onelogin/SAML-Toolkits/issues",
-        "source": "https://github.com/onelogin/SAML-Toolkits/"
     },
     "require": {
         "php": ">=7.3",
